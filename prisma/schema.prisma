@@ -10,7 +10,7 @@ datasource db {
 model Employee {
   id        String             @id @unique @default(uuid())
   name      String
-  cpf       Int                @unique
+  cpf       String             @unique
   situation String             @default(dbgenerated("A"))
   createdAt DateTime           @default(now())
   ticket    TicketByEmployee[]

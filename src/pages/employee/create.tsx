@@ -24,8 +24,8 @@ const handleSchemaValidation = yup.object().shape({
 })
 
 export default function CreateEmployee() {
-    const [isLoading, setIsLoading] = useState(false);
     const toast = useToast();
+    const [isLoading, setIsLoading] = useState(false);
     const { register, handleSubmit, reset, formState: { errors }, control } = useForm<any>({
         resolver: yupResolver(handleSchemaValidation)
     });
@@ -44,7 +44,7 @@ export default function CreateEmployee() {
                 isClosable: true,
             });
             reset();
-            reset({ cellphone: "" })
+            reset({ cpf: "" })
             setIsLoading(false)
         }).catch((err: any) => {
             console.log(err)
@@ -110,6 +110,7 @@ export default function CreateEmployee() {
                             _hover={{ borderColor: 'gray.500' }}
                             as={InputMask}
                             mask="***.***.***-**"
+                            maskChar={null}
                             type="text"
                             placeholder="Digite..."
                             size="lg"
