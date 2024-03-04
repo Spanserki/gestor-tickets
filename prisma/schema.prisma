@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id        String             @id @unique @default(uuid())
+  name      String
+  cpf       Int                @unique
+  situation String             @default(dbgenerated("A"))
+  createdAt DateTime           @default(now())
+  ticket    TicketByEmployee[]
+}
+
+model TicketByEmployee {
+  id         String   @id @unique @default(uuid())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  createdAt  DateTime @default(now())
+  employeeId String
+}
+
+model Ticket {
+  id      String @id @unique @default(uuid())
+  quntity Int
+}
