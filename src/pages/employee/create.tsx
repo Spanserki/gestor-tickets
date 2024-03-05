@@ -1,6 +1,7 @@
+import { api } from "@/lib/api";
+import { queryClient } from "@/lib/queryClient";
 import {
     Button,
-    Divider,
     FormControl,
     FormErrorMessage,
     FormLabel,
@@ -10,13 +11,13 @@ import {
     Stack,
     useToast
 } from "@chakra-ui/react";
-import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
-import { SubmitHandler, useForm } from "react-hook-form";
-import InputMask from 'react-input-mask';
-import { useState } from "react";
-import { api } from "@/lib/api";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import InputMask from 'react-input-mask';
+import * as yup from 'yup';
 
 const handleSchemaValidation = yup.object().shape({
     name: yup.string().required('Campo obrigatório'),
@@ -24,6 +25,7 @@ const handleSchemaValidation = yup.object().shape({
 })
 
 export default function CreateEmployee() {
+    const router = useRouter();
     const toast = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const { register, handleSubmit, reset, formState: { errors }, control } = useForm<any>({
@@ -46,15 +48,27 @@ export default function CreateEmployee() {
             reset();
             reset({ cpf: "" })
             setIsLoading(false)
+            queryClient.invalidateQueries(['getEmployees'])
+            router.push('/')
         }).catch((err: any) => {
-            console.log(err)
+            if (err.response.status === 409) {
+                setIsLoading(false)
+                toast({
+                    title: '😕',
+                    description: `${err.response.data.message}`,
+                    status: 'warning',
+                    duration: 9000,
+                    isClosable: true,
+                })
+                return
+            }
             toast({
                 title: '😕',
-                description: `Não conseguimos cadastrar esse usuário.`,
+                description: 'Não conseguimos cadastrar o funcionário.',
                 status: 'error',
                 duration: 9000,
                 isClosable: true,
-            });
+            })
             setIsLoading(false)
         })
     }
