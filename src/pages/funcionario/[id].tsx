@@ -1,7 +1,6 @@
 import { ReactSelectSingle } from "@/components/ReactSelectSingle";
 import { GetEmployee } from "@/hooks/query";
 import { api } from "@/lib/api";
-import { queryClient } from "@/lib/queryClient";
 import {
     Box,
     Button,
@@ -18,9 +17,10 @@ import {
     useToast
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import InputMask from 'react-input-mask';
 import * as yup from 'yup';
@@ -38,55 +38,73 @@ const options = [
 
 export default function CreateEmployee() {
     const router = useRouter();
+    const toast = useToast();
+    const client = useQueryClient();
     const { id } = router.query;
     const { data, isLoading, error, refetch } = GetEmployee(`${id}`)
-    const toast = useToast();
     const [isLoadingButton, setIsLoadingButton] = useState(false);
 
     const { handleSubmit, reset, formState: { errors }, control } = useForm<any>({
         resolver: yupResolver(handleSchemaValidation)
     });
 
-    const handleUpdate = async (values: any) => {
-        setIsLoadingButton(true)
-        const { name, cpf, situation } = values;
-        await api.put(`/employee/${id}`, {
-            name,
-            cpf,
-            situation: situation.value
-        }).then(res => {
-            toast({
-                title: 'Sucesso!',
-                description: `Cadastro atualizado 👍.`,
-                status: 'success',
-                duration: 7000,
-                isClosable: true,
-            });
-            reset();
-            setIsLoadingButton(false)
-            queryClient.invalidateQueries('employees')
-            router.push('/')
-        }).catch((err: any) => {
-            if (err.response.status === 409) {
-                setIsLoadingButton(false)
+    const mutation = useMutation({
+        mutationFn: async (values: any) => {
+            const { name, cpf, situation } = values;
+            try {
+                await api.put(`/employee/${id}`, {
+                    name,
+                    cpf,
+                    situation: situation.value
+                }).then(res => {
+                    toast({
+                        title: 'Sucesso!',
+                        description: `Cadastro atualizado 👍.`,
+                        status: 'success',
+                        duration: 7000,
+                        isClosable: true,
+                    });
+                    setIsLoadingButton(false)
+                    router.push('/')
+                }).catch((err: any) => {
+                    if (err.response.status === 409) {
+                        setIsLoadingButton(false)
+                        toast({
+                            title: '😕',
+                            description: `${err.response.data.message}`,
+                            status: 'warning',
+                            duration: 9000,
+                            isClosable: true,
+                        })
+                        return
+                    }
+                    toast({
+                        title: '😕',
+                        description: 'Não conseguimos atualizar o cadastro.',
+                        status: 'error',
+                        duration: 9000,
+                        isClosable: true,
+                    })
+                    setIsLoadingButton(false)
+                })
+            } catch (error: any) {
                 toast({
                     title: '😕',
-                    description: `${err.response.data.message}`,
+                    description: `${error.response.data.message}`,
                     status: 'warning',
                     duration: 9000,
                     isClosable: true,
                 })
-                return
             }
-            toast({
-                title: '😕',
-                description: 'Não conseguimos atualizar o cadastro.',
-                status: 'error',
-                duration: 9000,
-                isClosable: true,
-            })
-            setIsLoadingButton(false)
-        })
+
+        },
+        onSettled: () => {
+            client.invalidateQueries({ queryKey: ['employee', id] })
+        },
+    })
+
+    const handleUpdate = async (values: any) => {
+        mutation.mutateAsync(values)
     }
     return (
         <Stack
@@ -131,12 +149,13 @@ export default function CreateEmployee() {
                                     control={control}
                                     name="name"
                                     defaultValue={data?.name}
-                                    render={({ field: { value } }) => (
+                                    render={({ field: { value, onChange } }) => (
                                         <Input
                                             _hover={{ borderColor: 'gray.500' }}
                                             type='text'
                                             placeholder="Digite..."
                                             value={value}
+                                            onChange={onChange}
                                         />
                                     )}
                                 />

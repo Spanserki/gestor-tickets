@@ -32,8 +32,9 @@ handler.get(async (req, res) => {
         })
         res.setHeader('x-total-count', count)
         res.send(response)
+        return res.status(200).json({ message: 'sucess' })
     } catch (error) {
-
+        return res.status(400).json({ message: error })
     }
 })
 

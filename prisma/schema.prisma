@@ -25,5 +25,5 @@ model TicketByEmployee {
 
 model Ticket {
   id      String @id @unique @default(uuid())
-  quntity Int
+  quantity Int
 }

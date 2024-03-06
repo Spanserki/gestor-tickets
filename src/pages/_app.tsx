@@ -1,18 +1,20 @@
 import "@/styles/globals.css";
-import type { AppProps } from "next/app";
-import * as React from 'react'
-import { ChakraProvider } from '@chakra-ui/react'
 import { theme } from "@/utils/theme";
-import { QueryClientProvider, QueryClient } from 'react-query'
+import { ChakraProvider } from '@chakra-ui/react';
+import {
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query';
+import type { AppProps } from "next/app";
 
-const queryclient = new QueryClient();
+const queryClient = new QueryClient()
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <QueryClientProvider client={queryclient}>
-      <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme}>
+      <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />;
-      </ChakraProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </ChakraProvider>
   )
 }

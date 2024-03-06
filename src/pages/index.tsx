@@ -1,6 +1,7 @@
 import EditButton from "@/components/EditButton";
+import ModalTicket from "@/components/ModalTicket";
 import SimpleToolip from "@/components/SimpleToollip";
-import { GetEmployees, PrefetchEmployee } from "@/hooks/query";
+import { GetEmployees, GetTickets, PrefetchEmployee } from "@/hooks/query";
 import {
   Badge,
   Button,
@@ -19,7 +20,8 @@ import {
   Text,
   Th,
   Thead,
-  Tr
+  Tr,
+  useDisclosure
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -31,6 +33,9 @@ export default function Home() {
   const [searchName, setSearchName] = useState('')
   const [isLoadingButton, setIsLoadingButton] = useState('')
   const [editLoading, setEditLoading] = useState('');
+  const [idModal, setIdModal] = useState('')
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { data: tickets } = GetTickets()
   const { data, isLoading, error, refetch } = GetEmployees(page, perPage, searchName)
 
   useEffect(() => {
@@ -67,20 +72,21 @@ export default function Home() {
           justify='end'
         >
           <Button
+            as={Link}
+            href='/tickets'
             onClick={() => setIsLoadingButton('T')}
-            colorScheme="yellow"
             isLoading={isLoadingButton === 'T' ? true : false}
           >
-            Tickets
+            Tickets disponíveis: {tickets?.quantity}
           </Button>
           <Button
             colorScheme="green"
             as={Link}
-            href='/employee/create'
+            href='/funcionario/criar'
             onClick={() => setIsLoadingButton('N')}
             isLoading={isLoadingButton === 'N' ? true : false}
           >
-            Novo
+            Novo usuário
           </Button>
         </HStack>
         {isLoading ? (
@@ -109,6 +115,7 @@ export default function Home() {
                   <Th>CPF</Th>
                   <Th>Ativo</Th>
                   <Th>Criado</Th>
+                  <Th>Ticket</Th>
                   <Th>Ações</Th>
                 </Tr>
               </Thead>
@@ -129,6 +136,17 @@ export default function Home() {
                         <SimpleToolip createdAT={item.createdAt} />
                       </Td>
                       <Td>
+                        <Button
+                          onClick={onOpen}
+                          onMouseEnter={() => setIdModal(item.id)}
+                          size='sm'
+                          colorScheme="yellow"
+                        >
+
+                          Liberar Ticket
+                        </Button>
+                      </Td>
+                      <Td>
                         <EditButton
                           id={item.id}
                           link={`/funcionario/${item.id}`}
@@ -145,6 +163,11 @@ export default function Home() {
           </>
         )}
       </Stack>
+      <ModalTicket
+        isOpen={isOpen}
+        onClose={onClose}
+        id={idModal}
+      />
     </Stack>
   );
 }
