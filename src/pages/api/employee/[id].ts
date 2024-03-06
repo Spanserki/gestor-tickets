@@ -17,17 +17,6 @@ router.get(async (req: NextApiRequest, res: NextApiResponse) => {
     res.json(response);
 });
 
-// router.use(isAuth).patch(async (req, res) => {
-//     const { id, isPublished } = req.body
-//     await prisma.post.update({
-//         where: { id },
-//         data: {
-//             isPublished: !isPublished
-//         }
-//     })
-//     res.send({})
-// })
-
 router.put(async (req, res) => {
     const { id } = req.query;
     const { name, cpf, situation } = req.body
@@ -55,16 +44,6 @@ router.put(async (req, res) => {
         return res.status(400).json({ message: error })
     }
 });
-
-// router.delete(async (req: NextApiRequest, res: NextApiResponse) => {
-//     const { id } = req.query;
-//     const response = await prisma.post.delete({
-//         where: {
-//             id: String(id)
-//         },
-//     });
-//     res.json(response);
-// });
 
 export default router.handler({
     onError: (err: any, req, res) => {

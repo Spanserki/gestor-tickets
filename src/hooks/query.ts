@@ -55,3 +55,19 @@ export function GetTickets() {
         staleTime: 1000 * 60, //60 seconds
     })
 }
+
+export function GetTicketsById(id: string, selectedInitialDate: any, selectedFinalDate: any) {
+    return useQuery({
+        queryKey: ['ticketsById', id],
+        queryFn: async () => {
+            const response = await api.get(`/ticket/${id}`, {
+                params: {
+                    selectedInitialDate,
+                    selectedFinalDate
+                }
+            });
+            return response.data
+        },
+        staleTime: 1000 * 60, //60 seconds
+    })
+}

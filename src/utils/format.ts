@@ -13,3 +13,11 @@ export function DistanceDate(date: string) {
     })
     return publishedAt;
 }
+
+export function GetDateWithInitialHour(date:string){
+    return format(new Date(String(date)), "yyyy-MM-dd'T'00:00:00'.000Z'")
+   }
+  
+  export function GetDateWithFinalHour(date:string){
+   return format(new Date(String(date)), "yyyy-MM-dd'T'23:59:59'.000Z'")
+  }

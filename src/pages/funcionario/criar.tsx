@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import { queryClient } from "@/lib/queryClient";
+import queryClient from "@/lib/queryClient";
 import {
     Button,
     FormControl,
@@ -48,7 +48,6 @@ export default function CreateEmployee() {
             reset();
             reset({ cpf: "" })
             setIsLoading(false)
-            queryClient.invalidateQueries(['getEmployees'])
             router.push('/')
         }).catch((err: any) => {
             if (err.response.status === 409) {

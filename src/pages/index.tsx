@@ -71,12 +71,7 @@ export default function Home() {
           w='100%'
           justify='end'
         >
-          <Button
-            as={Link}
-            href='/tickets'
-            onClick={() => setIsLoadingButton('T')}
-            isLoading={isLoadingButton === 'T' ? true : false}
-          >
+          <Button>
             Tickets disponíveis: {tickets?.quantity}
           </Button>
           <Button
@@ -108,58 +103,70 @@ export default function Home() {
                 />
               </InputGroup>
             </Stack>
-            <Table variant='simple' colorScheme="red" size='lg'>
-              <Thead>
-                <Tr>
-                  <Th>Nome</Th>
-                  <Th>CPF</Th>
-                  <Th>Ativo</Th>
-                  <Th>Criado</Th>
-                  <Th>Ticket</Th>
-                  <Th>Ações</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {data?.results.map((item: any) => {
-                  return (
-                    <Tr key={item.id}>
-                      <Td>{item.name}</Td>
-                      <Td>{item.cpf}</Td>
-                      <Td>
-                        <Badge
-                          colorScheme={item.situation === 'A' ? 'green' : 'red'}
+            <Stack
+              w='100%'
+              overflowX="auto"
+            >
+              <Table variant='simple' colorScheme="red" size='lg'>
+                <Thead>
+                  <Tr>
+                    <Th>Nome</Th>
+                    <Th>CPF</Th>
+                    <Th>Ativo</Th>
+                    <Th>Criado</Th>
+                    <Th>Ticket</Th>
+                    <Th>Ações</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {data?.results.map((item: any) => {
+                    return (
+                      <Tr key={item.id}>
+                        <Td
+                          as={Link}
+                          href={`/funcionario/${item.id}`}
+                          _hover={{ textDecor: 'underline' }}
                         >
-                          {item.situation}
-                        </Badge>
-                      </Td>
-                      <Td fontStyle='italic' fontSize='sm'>
-                        <SimpleToolip createdAT={item.createdAt} />
-                      </Td>
-                      <Td>
-                        <Button
-                          onClick={onOpen}
-                          onMouseEnter={() => setIdModal(item.id)}
-                          size='sm'
-                          colorScheme="yellow"
-                        >
+                          {item.name}
+                        </Td>
+                        <Td>{item.cpf}</Td>
+                        <Td>
+                          <Badge
+                            colorScheme={item.situation === 'A' ? 'green' : 'red'}
+                          >
+                            {item.situation}
+                          </Badge>
+                        </Td>
+                        <Td fontStyle='italic' fontSize='sm'>
+                          <SimpleToolip createdAT={item.createdAt} />
+                        </Td>
+                        <Td>
+                          <Button
+                            onClick={onOpen}
+                            onMouseEnter={() => setIdModal(item.id)}
+                            size='sm'
+                            colorScheme="yellow"
+                          >
 
-                          Liberar Ticket
-                        </Button>
-                      </Td>
-                      <Td>
-                        <EditButton
-                          id={item.id}
-                          link={`/funcionario/${item.id}`}
-                          editLoading={editLoading}
-                          handlePrefetch={() => handlePrefetch(item.id)}
-                          setEditloading={setEditLoading}
-                        />
-                      </Td>
-                    </Tr>
-                  )
-                })}
-              </Tbody>
-            </Table>
+                            Liberar Ticket
+                          </Button>
+                        </Td>
+                        <Td>
+                          <EditButton
+                            id={item.id}
+                            link={`/funcionario/${item.id}`}
+                            editLoading={editLoading}
+                            handlePrefetch={() => handlePrefetch(item.id)}
+                            setEditloading={setEditLoading}
+                          />
+                        </Td>
+                      </Tr>
+                    )
+                  })}
+                </Tbody>
+              </Table>
+            </Stack>
+
           </>
         )}
       </Stack>

@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { GetDateWithFinalHour, GetDateWithInitialHour } from "@/utils/format";
+import { addDays } from "date-fns";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
@@ -31,11 +33,22 @@ handler.post(async (req, res) => {
     const verifyQuantityTicket: any = await prisma.ticket.findUnique({
         where: { id: 'b49388ef-609f-47e2-bb03-51b0f80e462c' }
     })
+    const verifyTicketByDay = await prisma.ticketByEmployee.findFirst({
+        where: {
+            employeeId: id,
+            createdAt: {
+                gte: GetDateWithInitialHour(String(new Date())),
+            },
+        },
+    });
     if (verifyQuantityTicket?.quntity <= 0) {
         return res.status(409).json({ message: 'Quantidade de tickets insuficiente' })
     }
     if (verifySituation?.situation === 'I') {
         return res.status(409).json({ message: 'Usuário esta inativo' })
+    }
+    if (verifyTicketByDay) {
+        return res.status(409).json({ message: 'Limite de tickets do dia atingido para este usuário' })
     }
     try {
         const response = await prisma.ticketByEmployee.create({
