@@ -1,5 +1,6 @@
+import EditButton from "@/components/EditButton";
 import SimpleToolip from "@/components/SimpleToollip";
-import { GetEmployees } from "@/hooks/query";
+import { GetEmployees, PrefetchEmployee } from "@/hooks/query";
 import {
   Badge,
   Button,
@@ -29,10 +30,16 @@ export default function Home() {
   const [page, setPage] = useState<number>(1);
   const [searchName, setSearchName] = useState('')
   const [isLoadingButton, setIsLoadingButton] = useState('')
+  const [editLoading, setEditLoading] = useState('');
   const { data, isLoading, error, refetch } = GetEmployees(page, perPage, searchName)
+
   useEffect(() => {
     refetch();
   }, [page, perPage, data, searchName])
+
+  async function handlePrefetch(id: string) {
+    PrefetchEmployee(id)
+  }
   return (
     <Stack
       w='100%'
@@ -102,12 +109,13 @@ export default function Home() {
                   <Th>CPF</Th>
                   <Th>Ativo</Th>
                   <Th>Criado</Th>
+                  <Th>Ações</Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {data?.results.map((item: any) => {
                   return (
-                    <Tr>
+                    <Tr key={item.id}>
                       <Td>{item.name}</Td>
                       <Td>{item.cpf}</Td>
                       <Td>
@@ -119,6 +127,15 @@ export default function Home() {
                       </Td>
                       <Td fontStyle='italic' fontSize='sm'>
                         <SimpleToolip createdAT={item.createdAt} />
+                      </Td>
+                      <Td>
+                        <EditButton
+                          id={item.id}
+                          link={`/funcionario/${item.id}`}
+                          editLoading={editLoading}
+                          handlePrefetch={() => handlePrefetch(item.id)}
+                          setEditloading={setEditLoading}
+                        />
                       </Td>
                     </Tr>
                   )

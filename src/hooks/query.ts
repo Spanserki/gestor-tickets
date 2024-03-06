@@ -1,10 +1,11 @@
 import { api } from "@/lib/api";
-import { useQuery } from "react-query";
+import { queryClient } from "@/lib/queryClient";
+import { useMutation, useQuery } from "react-query";
 
 export function GetEmployees(page: number, perPage: number, searchName: string) {
     return (
         useQuery(
-            ['getEmployees', page],
+            ['employees', page],
             async () => {
                 const response = await api.get(`/employee`, {
                     params: {
@@ -20,38 +21,37 @@ export function GetEmployees(page: number, perPage: number, searchName: string) 
                     total
                 }
             },
+            {
+                staleTime: 1000 * 60,
+            }
         )
     )
 }
 
-export function GetQuizis(selectedInitialDate: any, selectedFinalDate: any) {
+export function GetEmployee(id: string) {
     return (
         useQuery(
-            ['getQuizis'],
+            ['employee', id],
             async () => {
-                const response = await api.get(`/quiz`, {
-                    params: {
-                        selectedInitialDate,
-                        selectedFinalDate
-                    }
-                });
-                return response.data;
-            },
-        )
-    )
-}
-
-export function GetQuiz(id: string) {
-    return (
-        useQuery(
-            ['quiz', id],
-            async () => {
-                const response = await api.get(`/quiz/${id}`);
+                const response = await api.get(`/employee/${id}`);
                 return response.data;
             },
             {
-                staleTime: 1000 * 60 * 1, //1 minuto
+                staleTime: 1000 * 60,
             }
         )
+    )
+}
+
+export async function PrefetchEmployee(id: string) {
+    await queryClient.prefetchQuery(
+        ['employee', id],
+        async () => {
+            const response = await api.get(`/employee/${id}`);
+            return response.data;
+        },
+        {
+            staleTime: 1000 * 60,
+        }
     )
 }
