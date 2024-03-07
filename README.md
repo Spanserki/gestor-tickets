@@ -15,7 +15,8 @@
 
 <ol>
     <li>Clone o projeto em sua máquina.</li>
-    <li>Rode o comando "yarn" no terminal para instalar todas as dependências.</li>
+    <li>Execute o comando "yarn" no terminal para instalar todas as dependências.</li>
+    <li>Execute o comando "yarn dev" para inicializar o projeto.</li>
     <li>Não será necessário o script para criação do banco de dados.</li>
     <li>O projeto foi desenvolvido com Prisma ORM, um administrador para banco de dados.</li>
 </ol>
