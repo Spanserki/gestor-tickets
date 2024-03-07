@@ -36,7 +36,8 @@ router.put(async (req, res) => {
             data: {
                 name,
                 cpf,
-                situation
+                situation,
+                updatedAt: new Date()
             },
         })
         return res.status(200).json({ message: 'success' })

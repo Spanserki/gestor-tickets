@@ -114,6 +114,7 @@ export default function Home() {
                     <Th>CPF</Th>
                     <Th>Ativo</Th>
                     <Th>Criado</Th>
+                    <Th>Atualizado</Th>
                     <Th>Ticket</Th>
                     <Th>Ações</Th>
                   </Tr>
@@ -139,6 +140,11 @@ export default function Home() {
                         </Td>
                         <Td fontStyle='italic' fontSize='sm'>
                           <SimpleToolip createdAT={item.createdAt} />
+                        </Td>
+                        <Td fontStyle='italic' fontSize='sm'>
+                          {!!item.updatedAt && (
+                            <SimpleToolip createdAT={item.updatedAt} />
+                          )}
                         </Td>
                         <Td>
                           <Button
