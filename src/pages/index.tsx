@@ -124,11 +124,13 @@ export default function Home() {
                     return (
                       <Tr key={item.id}>
                         <Td
-                          as={Link}
-                          href={`/funcionario/${item.id}`}
                           _hover={{ textDecor: 'underline' }}
                         >
-                          {item.name}
+                          <Link
+                            href={`/funcionario/${item.id}`}
+                          >
+                            {item.name}
+                          </Link>
                         </Td>
                         <Td>{item.cpf}</Td>
                         <Td>
@@ -153,7 +155,6 @@ export default function Home() {
                             size='sm'
                             colorScheme="yellow"
                           >
-
                             Liberar Ticket
                           </Button>
                         </Td>
