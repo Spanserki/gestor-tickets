@@ -147,17 +147,6 @@ export default function CreateEmployee() {
                 >
                     Dados do funcionário
                 </Heading>
-                <Stack
-                    w='100%'
-                >
-                    <Stack
-                        w='fit-content'
-                        borderWidth={1}
-                        p={4}
-                        spacing={6}
-                    >
-                    </Stack>
-                </Stack>
                 {isLoading ? (
                     <Spinner />
                 ) : error ? (
